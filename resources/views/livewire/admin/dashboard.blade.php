@@ -173,9 +173,9 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="jz-empty-state">
+                            <td colspan="z" class="jz-empty-state">
                                 <i class="bi bi-inbox jz-empty-icon d-block mb-2"></i>
-                                Belum ada data lowongan kerja.
+                                
                             </td>
                         </tr>
                     @endforelse
@@ -290,7 +290,7 @@
             @empty
                 <div class="col-12 jz-empty-state" style="padding:48px 0;">
                     <i class="bi bi-camera-reels jz-empty-icon d-block mb-2"></i>
-                    Belum ada koleksi video pendek terunggah.
+
                 </div>
             @endforelse
         </div>

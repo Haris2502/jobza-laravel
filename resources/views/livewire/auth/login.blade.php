@@ -97,16 +97,16 @@
             </div>
 
             {{-- WhatsApp support --}}
-            <a href="https://wa.me/628989212699" target="_blank" class="al-wa-card">
-                <div class="al-wa-card__icon">
-                    <i class="bi bi-whatsapp"></i>
-                </div>
-                <div class="al-wa-card__body">
-                    <p class="al-wa-card__title">Butuh akses admin?</p>
-                    <p class="al-wa-card__sub">Hubungi Superadmin via WhatsApp</p>
-                </div>
-                <i class="bi bi-chevron-right al-wa-card__arrow"></i>
-            </a>
+            <a href="https://wa.me/628989212699?text=Halo%20Superadmin%20Jobza%2C%20saya%20membutuhkan%20akses%20ke%20halaman%20panel%20admin%20Jobza.%20Mohon%20bantuannya%20untuk%20proses%20verifikasi%20dan%20aktivasi%20akun%20saya.%20Terima%20kasih!" target="_blank" class="al-wa-card">
+    <div class="al-wa-card__icon">
+        <i class="bi bi-whatsapp"></i>
+    </div>
+    <div class="al-wa-card__body">
+        <p class="al-wa-card__title">Butuh akses admin?</p>
+        <p class="al-wa-card__sub">Hubungi Superadmin via WhatsApp</p>
+    </div>
+    <i class="bi bi-chevron-right al-wa-card__arrow"></i>
+</a>
 
             {{-- Register link --}}
             <p class="al-register-link">
