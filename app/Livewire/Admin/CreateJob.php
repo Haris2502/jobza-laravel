@@ -85,7 +85,7 @@ class CreateJob extends Component
             foreach ($this->photos as $photo) {
                 $storedPath = $photo->store('jobs/gallery', 'public');
                 // Ubah menjadi URL mutlak/absolute asset agar mudah dibaca oleh aplikasi User
-                $galleryPaths[] = asset('storage/' . $storedPath);
+                $galleryPaths[] = asset('public/storage/' . $storedPath);
             }
         }
 

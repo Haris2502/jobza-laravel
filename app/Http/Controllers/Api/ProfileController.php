@@ -58,6 +58,7 @@ class ProfileController extends Controller
             'phone_number' => 'nullable|string',
             'bio'          => 'nullable|string',
             'education'    => 'nullable|string',
+            'avatar'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'resume'       => 'nullable|file|mimes:pdf|max:2048', // Maksimal 2MB PDF
         ]);
 
@@ -69,6 +70,18 @@ class ProfileController extends Controller
         $profile->phone_number = $request->input('phone_number');
         $profile->bio = $request->input('bio');
         $profile->education = $request->input('education');
+
+        // Logika upload file avatar jika ada file baru
+        if ($request->hasFile('avatar')) {
+            // Hapus avatar lama jika ada
+            if ($profile->avatar && Storage::disk('public')->exists($profile->avatar)) {
+                Storage::disk('public')->delete($profile->avatar);
+            }
+
+            // Simpan file baru ke folder 'avatars' di dalam direktori public storage
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $profile->avatar = $path;
+        }
 
         // Logika upload file resume jika ada file baru yang diunggah
         if ($request->hasFile('resume')) {
@@ -115,6 +128,48 @@ class ProfileController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Profil berhasil dihapus.'
+        ]);
+    }
+
+    public function downloadResume($userId)
+    {
+        $profile = UserProfile::where('user_id', $userId)->first();
+
+        if (!$profile || !$profile->resume_url) {
+            return response()->json(['message' => 'Resume tidak ditemukan'], 404);
+        }
+
+        $path = storage_path('app/public/' . $profile->resume_url);
+
+        if (!file_exists($path)) {
+            return response()->json(['message' => 'File tidak ditemukan'], 404);
+        }
+
+        return response()->download($path, basename($profile->resume_url), [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($profile->resume_url) . '"',
+        ]);
+    }
+
+    public function downloadAvatar($userId)
+    {
+        $profile = UserProfile::where('user_id', $userId)->first();
+
+        if (!$profile || !$profile->avatar) {
+            return response()->json(['message' => 'Avatar tidak ditemukan'], 404);
+        }
+
+        $path = storage_path('app/public/' . $profile->avatar);
+
+        if (!file_exists($path)) {
+            return response()->json(['message' => 'File tidak ditemukan'], 404);
+        }
+
+        $mime = mime_content_type($path);
+
+        return response()->file($path, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'public, max-age=86400',
         ]);
     }
 }

@@ -26,6 +26,12 @@ Route::get('/jobs/{id}', [JobController::class, 'show']);
 // REELS PUBLIC (Melihat daftar reels bebas tanpa login)
 Route::get('/reels', [ReelsController::class, 'index']);
 
+// RESUME PUBLIC (Download file PDF resume milik user)
+Route::get('/resume/{userId}', [ProfileController::class, 'downloadResume']);
+
+// AVATAR PUBLIC (Download file avatar user)
+Route::get('/avatar/{userId}', [ProfileController::class, 'downloadAvatar']);
+
 
 /*
 |--------------------------------------------------------------------------

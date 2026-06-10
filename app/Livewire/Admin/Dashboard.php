@@ -111,7 +111,7 @@ class Dashboard extends Component
         if (isset($this->existingImageUrl[$index])) {
             $urlToDelete = $this->existingImageUrl[$index];
 
-            $cleanPath = str_replace(asset('storage/'), '', $urlToDelete);
+            $cleanPath = str_replace(asset('public/storage/'), '', $urlToDelete);
             Storage::disk('public')->delete($cleanPath);
 
             unset($this->existingImageUrl[$index]);
@@ -150,7 +150,7 @@ class Dashboard extends Component
         if (!empty($this->new_images)) {
             foreach ($this->new_images as $file) {
                 $storedPath = $file->store('jobs/banners', 'public');
-                $finalBannersArray[] = asset('storage/' . $storedPath);
+                $finalBannersArray[] = asset('public/storage/' . $storedPath);
             }
         }
 
@@ -209,7 +209,7 @@ class Dashboard extends Component
             $banners = is_array($job->image_url) ? $job->image_url : (json_decode($job->image_url, true) ?? []);
             if (is_array($banners)) {
                 foreach ($banners as $url) {
-                    $path = str_replace(asset('storage/'), '', $url);
+                    $path = str_replace(asset('public/storage/'), '', $url);
                     Storage::disk('public')->delete($path);
                 }
             }
@@ -293,21 +293,21 @@ class Dashboard extends Component
         $videoUrl = $this->existingReelVideo;
         if ($this->reelVideoFile) {
             if ($reel->video_url) {
-                $oldPath = str_replace(asset('storage/'), '', $reel->video_url);
+                $oldPath = str_replace(asset('public/storage/'), '', $reel->video_url);
                 Storage::disk('public')->delete($oldPath);
             }
             $videoPath = $this->reelVideoFile->store('reels/videos', 'public');
-            $videoUrl = asset('storage/' . $videoPath);
+            $videoUrl = asset('public/storage/' . $videoPath);
         }
 
         $thumbnailUrl = $this->existingReelThumbnail;
         if ($this->reelThumbnailFile) {
             if ($reel->thumbnail_url) {
-                $oldThumbPath = str_replace(asset('storage/'), '', $reel->thumbnail_url);
+                $oldThumbPath = str_replace(asset('public/storage/'), '', $reel->thumbnail_url);
                 Storage::disk('public')->delete($oldThumbPath);
             }
             $thumbnailPath = $this->reelThumbnailFile->store('reels/thumbnails', 'public');
-            $thumbnailUrl = asset('storage/' . $thumbnailPath);
+            $thumbnailUrl = asset('public/storage/' . $thumbnailPath);
         }
 
         $reel->update([
@@ -351,11 +351,12 @@ class Dashboard extends Component
 
         if ($reel) {
             if ($reel->video_url) {
-                $videoPath = str_replace(asset('storage/'), '', $reel->video_url);
+                $videoPath = str_replace(asset('public/storage/'), '', $reel->video_url);
                 Storage::disk('public')->delete($videoPath);
             }
             if ($reel->thumbnail_url) {
-                $thumbPath = str_replace(asset('storage/'), '', $reel->thumbnail_url);
+                $thumbPath = str_replace(asset('public/
+                storage/'), '', $reel->thumbnail_url);
                 Storage::disk('public')->delete($thumbPath);
             }
             $reel->delete();

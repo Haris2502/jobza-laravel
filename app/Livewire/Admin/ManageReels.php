@@ -52,8 +52,8 @@ class ManageReels extends Component
         Reels::create([
             'title'         => $this->title,
             'description'   => $this->description,
-            'video_url'     => $videoPath ? asset('storage/' . $videoPath) : null,
-            'thumbnail_url' => $thumbnailPath ? asset('storage/' . $thumbnailPath) : null,
+            'video_url'     => $videoPath ? asset('public/storage/' . $videoPath) : null,
+            'thumbnail_url' => $thumbnailPath ? asset('public/storage/' . $thumbnailPath) : null,
             'category'      => strtolower($this->category),
             'status'        => 'open',
             'salary'        => $this->salary ?? 'Negotiable',
