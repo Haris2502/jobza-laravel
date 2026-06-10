@@ -15,10 +15,8 @@ class ProfileController extends Controller
      */
     public function show($id)
     {
-        // Temukan user berdasarkan ID, load relasi profile
         $user = User::with('profile')->findOrFail($id);
 
-        // Jika profile belum ada, kita buatkan profile kosong agar tidak Null
         if (!$user->profile) {
             $user->profile()->create([
                 'avatar' => null,
@@ -30,7 +28,6 @@ class ProfileController extends Controller
             $user->load('profile');
         }
 
-        // Map relasi agar sesuai dengan key 'user_profile' yang diharapkan Flutter
         $userData = $user->toArray();
         $userData['user_profile'] = $userData['profile'];
         unset($userData['profile']);
@@ -46,61 +43,48 @@ class ProfileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Temukan user berdasarkan ID
         $user = User::findOrFail($id);
 
-        // Cari atau buat profil baru jika belum ada
         $profile = UserProfile::firstOrCreate(['user_id' => $user->id]);
 
-        // Validasi input
         $request->validate([
             'name'         => 'required|string|max:255',
             'phone_number' => 'nullable|string',
             'bio'          => 'nullable|string',
             'education'    => 'nullable|string',
             'avatar'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'resume'       => 'nullable|file|mimes:pdf|max:2048', // Maksimal 2MB PDF
+            'resume'       => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
-        // Update nama user di tabel users
         $user->name = $request->input('name');
         $user->save();
 
-        // Update data teks profil
         $profile->phone_number = $request->input('phone_number');
         $profile->bio = $request->input('bio');
         $profile->education = $request->input('education');
 
-        // Logika upload file avatar jika ada file baru
         if ($request->hasFile('avatar')) {
-            // Hapus avatar lama jika ada
             if ($profile->avatar && Storage::disk('public')->exists($profile->avatar)) {
                 Storage::disk('public')->delete($profile->avatar);
             }
 
-            // Simpan file baru ke folder 'avatars' di dalam direktori public storage
             $path = $request->file('avatar')->store('avatars', 'public');
             $profile->avatar = $path;
         }
 
-        // Logika upload file resume jika ada file baru yang diunggah
         if ($request->hasFile('resume')) {
-            // Hapus file resume lama jika ada di storage demi menghemat ruang
             if ($profile->resume_url && Storage::disk('public')->exists($profile->resume_url)) {
                 Storage::disk('public')->delete($profile->resume_url);
             }
 
-            // Simpan file baru ke folder 'resumes' di dalam direktori public storage
             $path = $request->file('resume')->store('resumes', 'public');
             $profile->resume_url = $path;
         }
 
         $profile->save();
 
-        // Reload relasi profile
         $user->load('profile');
 
-        // Map relasi agar sesuai dengan key 'user_profile' yang diharapkan Flutter
         $userData = $user->toArray();
         $userData['user_profile'] = $userData['profile'];
         unset($userData['profile']);
@@ -160,6 +144,28 @@ class ProfileController extends Controller
         }
 
         $path = storage_path('app/public/' . $profile->avatar);
+
+        if (!file_exists($path)) {
+            return response()->json(['message' => 'File tidak ditemukan'], 404);
+        }
+
+        $mime = mime_content_type($path);
+
+        return response()->file($path, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
+    }
+
+    public function downloadCompanyLogo($adminId)
+    {
+        $adminProfile = \App\Models\AdminProfile::where('user_id', $adminId)->first();
+
+        if (!$adminProfile || !$adminProfile->company_logo) {
+            return response()->json(['message' => 'Logo tidak ditemukan'], 404);
+        }
+
+        $path = storage_path('app/public/' . $adminProfile->company_logo);
 
         if (!file_exists($path)) {
             return response()->json(['message' => 'File tidak ditemukan'], 404);

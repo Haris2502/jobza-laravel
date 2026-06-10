@@ -26,11 +26,10 @@ Route::get('/jobs/{id}', [JobController::class, 'show']);
 // REELS PUBLIC (Melihat daftar reels bebas tanpa login)
 Route::get('/reels', [ReelsController::class, 'index']);
 
-// RESUME PUBLIC (Download file PDF resume milik user)
+// RESUME, AVATAR & COMPANY LOGO (Download file via Laravel, bukan storage symlink)
 Route::get('/resume/{userId}', [ProfileController::class, 'downloadResume']);
-
-// AVATAR PUBLIC (Download file avatar user)
 Route::get('/avatar/{userId}', [ProfileController::class, 'downloadAvatar']);
+Route::get('/company-logo/{adminId}', [ProfileController::class, 'downloadCompanyLogo']);
 
 
 /*
@@ -46,9 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    /* REELS INTERACTION (Dipindah ke sini agar aman & tahu ID User-nya) */
+    /* REELS INTERACTION */
     Route::post('/reels/{id}/like', [ReelsController::class, 'toggleLike']);
-    Route::post('/reels/{id}/save', [ReelsController::class, 'toggleSave']); // 👈 Sekarang sudah aman menggunakan token
+    Route::post('/reels/{id}/save', [ReelsController::class, 'toggleSave']);
 
     /* PROFILE */
     Route::post('/profiles', [ProfileController::class, 'store']);
@@ -75,7 +74,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/apply', [ApplicationController::class, 'apply']);
         Route::get('/my-applications', [ApplicationController::class, 'userApplications']);
 
-        // 👈 TAMBAHAN: Route untuk mengambil daftar reels yang disimpan oleh user di Profilnya
         Route::get('/my-saved-reels', [ReelsController::class, 'getSavedReels']);
     });
 });
